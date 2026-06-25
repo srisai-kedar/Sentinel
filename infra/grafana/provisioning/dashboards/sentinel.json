@@ -1,0 +1,59 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "graphTooltip": 0,
+  "panels": [
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 0 },
+      "id": 1,
+      "targets": [{ "expr": "sum(rate(sentinel_requests_total[1m]))", "legendFormat": "req/s" }],
+      "title": "Request Rate",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 0 },
+      "id": 2,
+      "targets": [{ "expr": "sum(rate(sentinel_blocked_requests_total[1m]))", "legendFormat": "blocked/s" }],
+      "title": "Blocked Requests",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 0 },
+      "id": 3,
+      "targets": [{ "expr": "histogram_quantile(0.99, sum(rate(sentinel_request_duration_seconds_bucket[5m])) by (le))", "legendFormat": "p99" }],
+      "title": "Request Latency p99",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 8 },
+      "id": 4,
+      "targets": [{ "expr": "min(sentinel_redis_up)", "legendFormat": "redis up" }],
+      "title": "Redis Up",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 8 },
+      "id": 5,
+      "targets": [{ "expr": "avg(sentinel_adaptive_multiplier)", "legendFormat": "multiplier" }],
+      "title": "Adaptive Multiplier",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 8 },
+      "id": 6,
+      "targets": [{ "expr": "max(sentinel_circuit_breaker_state)", "legendFormat": "{{downstream}}" }],
+      "title": "Circuit Breaker State",
+      "type": "timeseries"
+    }
+  ],
+  "schemaVersion": 39,
+  "title": "Sentinel Gateway",
+  "uid": "sentinel-gateway",
+  "version": 2
+}

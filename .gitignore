@@ -1,0 +1,36 @@
+# Environment
+.env
+.env.local
+
+# Go
+gateway/bin/
+gateway/vendor/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Node / Dashboard
+dashboard/node_modules/
+dashboard/dist/
+
+# Load test results (keep .gitkeep)
+load-tests/results/*
+!load-tests/results/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
