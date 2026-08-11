@@ -18,9 +18,9 @@ var upgrader = websocket.Upgrader{
 
 // AdminHandler serves runtime configuration and stats endpoints.
 type AdminHandler struct {
-	cfg       *config.Config
-	cfgMu     sync.RWMutex
-	stats     *stats.Collector
+	cfg   *config.Config
+	cfgMu sync.RWMutex
+	stats *stats.Collector
 }
 
 func NewAdminHandler(cfg *config.Config, collector *stats.Collector) *AdminHandler {
@@ -46,7 +46,7 @@ func (h *AdminHandler) ListLimits(w http.ResponseWriter, _ *http.Request) {
 	defer h.cfgMu.RUnlock()
 
 	type entry struct {
-		Route string             `json:"route"`
+		Route string               `json:"route"`
 		Rule  config.RateLimitRule `json:"rule"`
 	}
 	out := []entry{{Route: "default", Rule: h.cfg.DefaultLimit}}
@@ -83,6 +83,27 @@ func (h *AdminHandler) UpdateLimit(w http.ResponseWriter, r *http.Request) {
 	}
 	if rule.Window == 0 {
 		rule.Window = h.cfg.DefaultLimit.Window
+	}
+	switch rule.Algorithm {
+	case "token_bucket", "sliding_window_log", "sliding_window_counter", "leaky_bucket":
+	default:
+		http.Error(w, "invalid algorithm", http.StatusBadRequest)
+		return
+	}
+
+	if rule.Capacity <= 0 {
+		http.Error(w, "capacity must be greater than zero", http.StatusBadRequest)
+		return
+	}
+
+	if rule.RefillRate < 0 {
+		http.Error(w, "refill_rate must not be negative", http.StatusBadRequest)
+		return
+	}
+
+	if rule.Window <= 0 {
+		http.Error(w, "window_sec must be greater than zero", http.StatusBadRequest)
+		return
 	}
 
 	if route == "default" {
